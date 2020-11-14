@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:key="app_theme"
+        android:title="Ночная тема">
+    </CheckBoxPreference>
+
+    <ListPreference
+        android:entries="@array/languages"
+        android:entryValues="@array/languages_val"
+        android:key="language_list"
+        android:summary="Выберите язык"
+        android:title="Язык">
+    </ListPreference>
+
+    <ListPreference
+        android:entries="@array/font_sizes"
+        android:entryValues="@array/font_sizes_val"
+        android:key="fonts_list"
+        android:summary="Выберите шрифт"
+        android:title="Шрифт">
+    </ListPreference>
+
+
+    <EditTextPreference
+        android:key="address"
+        android:summary="Address for notifications"
+        android:title="Address">
+    </EditTextPreference>
+</PreferenceScreen>

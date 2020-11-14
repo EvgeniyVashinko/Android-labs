@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">SuperTimer</string>
+
+    <string-array name="languages">
+        <item>Русский</item>
+        <item>Английский</item>
+    </string-array>
+    
+    <string-array name="languages_val">
+        <item>RU</item>
+        <item>EN</item>
+    </string-array>
+
+    <string-array name="font_sizes">
+        <item>Маленький</item>
+        <item>Большой</item>
+    </string-array>
+
+    <string-array name="font_sizes_val">
+        <item>16</item>
+        <item>30</item>
+    </string-array>
+
+</resources>
