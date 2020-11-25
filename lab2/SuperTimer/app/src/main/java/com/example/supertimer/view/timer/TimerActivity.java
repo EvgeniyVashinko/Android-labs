@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -12,9 +13,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -42,31 +43,18 @@ public class TimerActivity extends AppCompatActivity {
     TimerService timerService;
     ServiceConnection serviceConnection;
     Intent intent;
-    int textSize = 16;
-    SharedPreferences sharedPreferences;
+    SharedPreferences sp;
+    float size;
+    String lang;
+    boolean nMode;
 
     private final String ACTION = "TIMER_ACTION";
     BroadcastReceiver br;
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
     protected void onStop() {
         super.onStop();
         unbindService(serviceConnection);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        textSize = Integer.parseInt(sharedPreferences.getString("fonts_list","2"));
-        adapter.setSize(textSize);
-        actListView.setAdapter(adapter);
-        actionName.setTextSize((float) (textSize * 1.5));
-        time.setTextSize(textSize * 2);
     }
 
     @Override
@@ -84,12 +72,25 @@ public class TimerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        super.setTheme(R.style.M_THEME);
+
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
+        size = Float.parseFloat(sp.getString("fontSize", "1.0"));
+        lang = sp.getString("language", "ru");
+        nMode = sp.getBoolean("nightMode",  false);
+
+        if (nMode) {
+            setTheme(R.style.my_theme_dark);
+        } else {
+            setTheme(R.style.my_theme_light);
+        }
+
+        Configuration configuration = new Configuration();
+        configuration.fontScale = size;
+        getBaseContext().getResources().updateConfiguration(configuration, null);
+
         setContentView(R.layout.activity_timer);
 
         timerViewModel = new ViewModelProvider(this).get(TimerViewModel.class);
-
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         actListView = findViewById(R.id.actTimerListView);
         pause = findViewById(R.id.condition);
@@ -119,8 +120,6 @@ public class TimerActivity extends AppCompatActivity {
         };
         IntentFilter intFilt = new IntentFilter(ACTION);
         registerReceiver(br, intFilt);
-        //зарегали
-
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -131,7 +130,7 @@ public class TimerActivity extends AppCompatActivity {
         actionList = App.getInstance().getActionDao().findActionsByTimerId(timerId);
 
         adapter = new TimerPageAdapter(this, R.layout.timer_action_item, actionList);
-        adapter.setSize(textSize);
+        adapter.setSize((int) (adapter.getSize() * size));
         actListView.setAdapter(adapter);
 
 

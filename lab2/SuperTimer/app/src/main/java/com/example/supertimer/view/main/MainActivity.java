@@ -1,78 +1,97 @@
 package com.example.supertimer.view.main;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.supertimer.App;
 import com.example.supertimer.R;
 import com.example.supertimer.model.Timer;
 import com.example.supertimer.view.detail.DetailActivity;
-import com.example.supertimer.view.settings.PrefActivity;
+import com.example.supertimer.view.settings.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity {
 
     MainViewModel mainViewModel;
     Context context = this;
     ListView timerListView;
-    SharedPreferences sharedPreferences;
-    Timer t;
+    SharedPreferences sp;
     TimerAdapter timerAdapter;
     int textSize = 16;
+    Button addTimer;
+    EditText timerName;
+    float size;
+    String lang;
+    boolean nMode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        super.setTheme(R.style.M_THEME);
+
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
+        size = Float.parseFloat(sp.getString("fontSize", "1.0"));
+        lang = sp.getString("language", "RU");
+        nMode = sp.getBoolean("nightMode",  false);
+
+        if (nMode) {
+            setTheme(R.style.my_theme_dark);
+        } else {
+            setTheme(R.style.my_theme_light);
+        }
+
+        Configuration configuration = new Configuration();
+        configuration.fontScale = size;
+
+        Locale locale = new Locale(lang);
+        Locale.setDefault(locale);
+        configuration.locale = locale;
+        getBaseContext().getResources().updateConfiguration(configuration, null);
+
         setContentView(R.layout.activity_main);
 
+        addTimer = (Button) findViewById(R.id.addTimerButton);
+        timerName = (EditText) findViewById(R.id.timerNameAdd);
 
-        t = new Timer();
-        // В отдельную функцию!
-        ArrayList<Integer> colorList = new ArrayList<Integer>();
-        colorList.add(Color.GREEN);
-        colorList.add(Color.BLUE);
-        colorList.add(Color.YELLOW);
-        colorList.add(Color.GRAY);
-        colorList.add(Color.WHITE);
-        t.name = "Timer" + (11);
-        t.color = getRandomElement(colorList);
-
-//
-//        for(int i = 0; i < 10; i++){
-//            t.name = "Timer" + (i+1);
-//            t.color = getRandomElement(colorList);
-//            App.getInstance().getTimerDao().insert(t);
-//        }
+        addTimer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Timer t = new Timer();
+                t.name = timerName.getText().toString();
+                if (t.name.equals("")){
+                    t.name = "New Timer";
+                }
+                t.color = getRandomColor();
+                App.getInstance().getTimerDao().insert(t);
+            }
+        });
 
         timerAdapter = new TimerAdapter(context, R.layout.timer_list_item, App.getInstance().getTimerDao().getAllTimers());
         timerListView = (ListView) findViewById(R.id.timerListView);
+        timerAdapter.setSize((int) (timerAdapter.getSize() * size));
         timerListView.setAdapter(timerAdapter);
         timerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                // получаем выбранный пункт
                 Timer selectedTimer = (Timer) adapterView.getItemAtPosition(i);
-//                Toast.makeText(getApplicationContext(), "Был выбран пункт id=" + selectedTimer.id,
-//                        Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
                 intent.putExtra("id", selectedTimer.id);
                 startActivity(intent);
@@ -84,57 +103,28 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             @Override
             public void onChanged(List<Timer> timers) {
                 timerAdapter = new TimerAdapter(context, R.layout.timer_list_item, App.getInstance().getTimerDao().getAllTimers());
-                timerAdapter.setSize(textSize);
+                timerAdapter.setSize((int) (timerAdapter.getSize() * size));
                 timerListView.setAdapter(timerAdapter);
             }
         });
-
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
-    public static <T> T getRandomElement(List<T> list)
+
+    public static int getRandomColor()
     {
+        ArrayList<Integer> colorList = new ArrayList<Integer>();
+        colorList.add(Color.GREEN);
+        colorList.add(Color.BLUE);
+        colorList.add(Color.YELLOW);
+        colorList.add(Color.GRAY);
+        colorList.add(Color.WHITE);
+
         Random random = new Random();
-        return list.get(random.nextInt(list.size()));
+        return colorList.get(random.nextInt(colorList.size()));
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuItem mi = menu.add(0, 1, 0, "Preferences");
-        mi.setIntent(new Intent(this, PrefActivity.class));
+        mi.setIntent(new Intent(this, SettingsActivity.class));
         return super.onCreateOptionsMenu(menu);
     }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-//        if (key.equals("app_theme")) {
-//            if (sharedPreferences.getBoolean("app_theme", false)){
-//                //dark theme
-//            }
-//            else{
-//                App.getInstance().getTimerDao().insert(t);
-//            }
-//
-//        }
-//        if (key.equals("fonts_list")){
-//            if (sharedPreferences.getString(key, "").equals("big")){
-////                timerAdapter.setSize(30);
-//            }
-//            else if(sharedPreferences.getString(key,"").equals("small")){
-////                timerAdapter.setSize(16);
-//            }
-//            timerListView.setAdapter(timerAdapter);
-//        }
-
-        
-//        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        textSize = Integer.parseInt(sharedPreferences.getString("fonts_list","2"));
-        timerAdapter.setSize(textSize);
-        timerListView.setAdapter(timerAdapter);
-    }
-
 }

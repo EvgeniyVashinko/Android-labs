@@ -3,6 +3,7 @@ package com.example.supertimer;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.CountDownTimer;
@@ -10,14 +11,16 @@ import android.os.IBinder;
 import android.os.Vibrator;
 import android.widget.Toast;
 
+import androidx.preference.PreferenceManager;
+
 import com.example.supertimer.model.Action;
 
 import java.util.List;
+import java.util.Locale;
 
 
 public class TimerService extends Service {
     private MediaPlayer player;
-    private Vibrator vibrator;
     private List<Action> actionList;
     private CountDownTimer t;
     private int position;
@@ -41,7 +44,7 @@ public class TimerService extends Service {
         this.timerId = timerId;
     }
 
-    //передавать в интент бандл из чего-то там
+    //передавать в интент бандл
     @Override
     public IBinder onBind(Intent intent) {
         return binder;
@@ -51,18 +54,24 @@ public class TimerService extends Service {
     public void onCreate() {
         player = MediaPlayer.create(this, R.raw.musend);
 //        player.setLooping(true); // зацикливаем
-        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+        String lang = PreferenceManager.getDefaultSharedPreferences(this).getString("language", "ru");
+        Locale locale = new Locale(lang);
+        Configuration configuration = new Configuration();
+        Locale.setDefault(locale);
+        configuration.locale = locale;
+        getBaseContext().getResources().updateConfiguration(configuration, null);
     }
 
     @Override
     public void onDestroy() {
-        Toast.makeText(this, "My Service Stopped", Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "My Service Stopped", Toast.LENGTH_LONG).show();
         player.stop();
     }
 
     @Override
     public void onStart(Intent intent, int startid) {
-        Toast.makeText(this, "My Service Started", Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "My Service Started", Toast.LENGTH_LONG).show();
         timerId = intent.getExtras().getInt("timerId", -1);
         position = intent.getExtras().getInt("position", 0);
         actionList = App.getInstance().getActionDao().findActionsByTimerId(timerId);
@@ -91,27 +100,15 @@ public class TimerService extends Service {
             @Override
             public void onFinish() {
                 if (position < actionList.size() - 1){
-                    Toast.makeText(getApplicationContext(), action.name+" завершено!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), action.name + " " + getText(R.string.actionEnd), Toast.LENGTH_SHORT).show();
                     setPosition(position + 1);
-                    //подумать
-//                    long mills = 1000L;
-//                    if (vibrator.hasVibrator()) {
-//                        vibrator.vibrate(mills);
-//                    }
                 }
                 else{
-                    Toast.makeText(getApplicationContext(), "Таймер завершен!",Toast.LENGTH_SHORT).show();
-//                    long mills = 3000L;
-//                    if (vibrator.hasVibrator()) {
-//                        vibrator.vibrate(mills);
-//                    }
+                    Toast.makeText(getApplicationContext(), R.string.timerEnd, Toast.LENGTH_SHORT).show();
                 }
-
                 player.start();
             }
         };
-//        setTime(sec);
-        //передавать значение секунд в активити
         t.start();
     }
 
@@ -132,6 +129,5 @@ public class TimerService extends Service {
             return TimerService.this;
         }
     }
-
 }
 

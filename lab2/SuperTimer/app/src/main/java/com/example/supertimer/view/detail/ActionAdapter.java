@@ -23,7 +23,7 @@ public class ActionAdapter  extends ArrayAdapter<Action> {
     private LayoutInflater inflater;
     private int layout;
     private List<Action> actions;
-    private int size = 16;
+    private int size;
 
 
     public ActionAdapter(Context context, int resource, List<Action> actions) {
@@ -31,11 +31,13 @@ public class ActionAdapter  extends ArrayAdapter<Action> {
         this.actions = actions;
         this.layout = resource;
         this.inflater = LayoutInflater.from(context);
+        this.size = 12;
     }
 
     public void setSize(int num){
         size = num;
     }
+    public int getSize() { return size; }
 
     public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -51,7 +53,7 @@ public class ActionAdapter  extends ArrayAdapter<Action> {
         seconds.setTextSize(size);
 
         Action action = actions.get(position);
-//
+
         actionName.setText(action.name);
         seconds.setText(Integer.toString(action.seconds));
 

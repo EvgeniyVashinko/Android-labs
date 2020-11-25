@@ -19,19 +19,25 @@
         android:paddingBottom="20dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">>
+        android:layout_weight="1">
     </ListView>
+    <EditText
+        android:id="@+id/tNameAdd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/actionName">
+    </EditText>
     <Button
         android:id="@+id/addButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Добавить">
+        android:text="@string/add">
     </Button>
     <Button
         android:id="@+id/startButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Старт">
+        android:text="@string/start">
     </Button>
 
 </LinearLayout>

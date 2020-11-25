@@ -12,7 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SuperTimer">
-        <activity android:name=".view.settings.PrefActivity"></activity>
+        <activity
+            android:name=".view.settings.SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
         <activity
             android:name=".SplashScreen"
             android:theme="@style/SplashTheme">
@@ -24,7 +26,7 @@
         </activity>
         <activity android:name=".view.timer.TimerActivity" />
         <activity android:name=".view.detail.DetailActivity" />
-        <activity android:name=".view.main.MainActivity"></activity>
+        <activity android:name=".view.main.MainActivity" />
 
         <service
             android:name=".TimerService"

@@ -10,7 +10,6 @@ import java.util.List;
 public class TimerViewModel extends ViewModel {
     private MutableLiveData<Integer> position;
     private MutableLiveData<Integer> time;
-//    private List<Action> actionList;
     private boolean serviceStart = false;
 
 
@@ -49,9 +48,4 @@ public class TimerViewModel extends ViewModel {
     public void setServiceStart(boolean serviceStart) {
         this.serviceStart = serviceStart;
     }
-
-//    public void setActionList(List<Action> actionList) {
-//        this.actionList = actionList;
-//    }
-
 }
