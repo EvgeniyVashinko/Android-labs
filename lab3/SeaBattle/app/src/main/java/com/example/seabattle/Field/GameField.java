@@ -12,6 +12,8 @@ import androidx.annotation.Nullable;
 
 import com.example.seabattle.R;
 
+import java.util.ArrayList;
+
 public class GameField extends View {
 
     int fieldLength = 10;
@@ -25,7 +27,7 @@ public class GameField extends View {
         this.context = context;
         this.fieldLength = 10;
         MakeField(fieldLength);
-        mode = FieldMode.CreateField;
+        mode = FieldMode.EnemyField;
     }
 
     private void MakeField(int fieldLength){
@@ -150,6 +152,9 @@ public class GameField extends View {
                 case EnemyField:
                     if (field[i][j] == CellState.Ship){
                         field[i][j] = CellState.Hit;
+                        if (CheckShipDestruction(i,j)){
+                            DrawMissAroundDestroyedShip();
+                        }
                     } else if (field[i][j] == CellState.Empty){
                         field[i][j] = CellState.Miss;
                     }
@@ -166,5 +171,125 @@ public class GameField extends View {
             invalidate();
         }
         return true;
+    }
+
+    ArrayList<CellPosition> ship = new ArrayList<>();
+
+    private boolean CheckShipDestruction(int i, int j){
+
+//        if (IsNotExistOrNotShip(i-1, j) && IsNotExistOrNotShip(i+1, j)  // значит он уничтожен одинарный
+//                && IsNotExistOrNotShip(i, j-1) && IsNotExistOrNotShip(i, j+1)){
+//            ship.add(new CellPosition(i,j));
+//            return true;
+//        }
+        if (IsNotExistOrNotShip(i-1, j) && IsNotExistOrNotShip(i+1, j)){ // по горизонтали
+            while (j >= 0){
+                if (field[i][j] == CellState.Ship){
+                    ship.clear();
+                    return false;
+                }
+                if (field[i][j] == CellState.Hit){
+                    ship.add(new CellPosition(i,j));
+                }
+                else{
+                    break;
+                }
+                j--;
+            }
+            if (ship.size() == 4){
+                return true;
+            }
+            j = ship.get(0).getJ();
+            while (j <= 9){
+                if (field[i][j] == CellState.Ship){
+                    ship.clear();
+                    return false;
+                }
+                if (field[i][j] == CellState.Hit){
+                    ship.add(new CellPosition(i,j));
+                }
+                else{
+                    break;
+                }
+                j++;
+            }
+        } else { // по вертикали
+            while (i >= 0){
+                if (field[i][j] == CellState.Ship){
+                    ship.clear();
+                    return false;
+                }
+                if (field[i][j] == CellState.Hit){
+                    ship.add(new CellPosition(i,j));
+                }
+                else{
+                    break;
+                }
+                i--;
+            }
+            if (ship.size() == 4){
+                return true;
+            }
+            i = ship.get(0).getI();
+            while (i <= 9){
+                if (field[i][j] == CellState.Ship){
+                    ship.clear();
+                    return false;
+                }
+                if (field[i][j] == CellState.Hit){
+                    ship.add(new CellPosition(i,j));
+                }
+                else{
+                    break;
+                }
+                i++;
+            }
+        }
+        return true;
+    }
+
+    private void DrawMissAroundDestroyedShip(){
+        CellPosition cell;
+        for (int i = 0; i < ship.size(); i++) {
+            cell = ship.get(i);
+
+            int _i = cell.getI();
+            int _j = cell.getJ();
+
+            for (int j = -1; j <= 1 ; j++) {
+
+                for (int k = -1; k <= 1 ; k++) {
+
+                    if (IsExists(_i - j, _j - k)){
+                        if (field[_i - j][_j - k] == CellState.Empty){
+                            field[_i - j][_j - k] = CellState.Miss;
+                        }
+                    }
+                }
+            }
+        }
+        invalidate();
+    }
+
+    private boolean IsNotExistOrNotShip(int i, int j){
+        boolean result;
+        try {
+            result = field[i][j] != CellState.Ship;
+        }
+        catch (Exception e) {
+            result = true;
+        }
+        return result;
+    }
+
+    private boolean IsExists(int i, int j){
+        boolean result;
+        try {
+            result = field[i][j] == field[i][j];
+        }
+        catch (Exception e){
+            result = false;
+        }
+        return result;
     }
 }
