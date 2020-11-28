@@ -18,12 +18,14 @@ public class GameField extends View {
     CellState[][] field;
     Context context;
     int cellHeight, cellWidth;
+    FieldMode mode;
 
     public GameField(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
         this.fieldLength = 10;
         MakeField(fieldLength);
+        mode = FieldMode.CreateField;
     }
 
     private void MakeField(int fieldLength){
@@ -39,6 +41,12 @@ public class GameField extends View {
 //        field[4][3] = CellState.Miss;
 //        field[5][6] = CellState.Ship;
 //        field[5][7] = CellState.Ship;
+        field[1][2] = CellState.Ship;
+        field[8][9] = CellState.Ship;
+        field[3][4] = CellState.Ship;
+        field[4][3] = CellState.Ship;
+        field[5][6] = CellState.Ship;
+        field[5][7] = CellState.Ship;
 
     }
 
@@ -65,10 +73,14 @@ public class GameField extends View {
                         DrawHitCell(canvas, i, j);
                         break;
                     case Miss:
-                        DrawMissCell(canvas, i, j);
+                        if (mode == FieldMode.EnemyField){
+                            DrawMissCell(canvas, i, j);
+                        }
                         break;
                     case Ship:
-                        DrawShipCell(canvas, i, j);
+                        if (mode == FieldMode.CreateField || mode == FieldMode.MyField){
+                            DrawShipCell(canvas, i, j);
+                        }
                         break;
                 }
             }
@@ -132,7 +144,25 @@ public class GameField extends View {
         if (event.getAction() == MotionEvent.ACTION_DOWN){
             int j = (int) (event.getX() / cellHeight);
             int i = (int) (event.getY() / cellWidth);
-            field[i][j] = CellState.Hit;
+            switch (mode){
+                case MyField:
+                    break;
+                case EnemyField:
+                    if (field[i][j] == CellState.Ship){
+                        field[i][j] = CellState.Hit;
+                    } else if (field[i][j] == CellState.Empty){
+                        field[i][j] = CellState.Miss;
+                    }
+                    break;
+                case CreateField:
+                    if (field[i][j] != CellState.Ship){
+                        field[i][j] = CellState.Ship;
+                    } else {
+                        field[i][j] = CellState.Empty;
+                    }
+                    break;
+            }
+
             invalidate();
         }
         return true;
