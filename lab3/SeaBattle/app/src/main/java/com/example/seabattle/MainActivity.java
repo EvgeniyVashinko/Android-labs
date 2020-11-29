@@ -2,6 +2,7 @@ package com.example.seabattle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,46 +14,39 @@ import android.view.ViewGroup.LayoutParams;
 
 public class MainActivity extends AppCompatActivity {
 
-    int fieldLength = 10, i, j;
-    String qq = "0";
-    Button buttons[][] = new Button[fieldLength][fieldLength];
-    GridLayout gridLayout;
+    int fieldLength = 10;
+    Button create, stat, connect;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        gridLayout = (GridLayout) findViewById(R.id.gameTable);
-//        for (i = 0; i < fieldLength; i++){
-//
-//            TableRow tableRow = new TableRow(this);
-//
-//            for (j = 0; j < fieldLength; j++){
-//
-//                Button button = new Button(this);
-//                button.setText("*");
-//                buttons[i][j] = button;
-//                String position = String.valueOf(i) + String.valueOf(j);
-//                button.setId(Integer.parseInt(position));
-//
-//                button.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        Button button = (Button) view;
-//                        Toast.makeText(getApplicationContext(), String.valueOf(button.getId()), Toast.LENGTH_SHORT).show();
-//                        button.setText(qq);
-//                        if (qq.equals("1")){
-//                            qq = "0";
-//                        }else{
-//                            qq = "1";
-//                        }
-//
-//                    }
-//                });
-//                tableRow.addView(button, j);
-//            }
-//
-//            gridLayout.addView(tableRow, i);
-//        }
+        create = (Button) findViewById(R.id.create);
+        connect = (Button) findViewById(R.id.connect);
+        stat = (Button) findViewById(R.id.stat);
+
+        create.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), CreateFieldActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        connect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), CreateFieldActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        stat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
     }
 }

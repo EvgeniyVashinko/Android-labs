@@ -60,6 +60,25 @@ public class GameField extends View {
         invalidate();
     }
 
+    public void setMode(FieldMode mode) {
+        this.mode = mode;
+        invalidate();
+    }
+
+    public void setField(CellState[][] field) {
+        this.field = field;
+        invalidate();
+    }
+
+    public CellState[][] getField() {
+        return field;
+    }
+
+    public void setFieldCell(int i, int j, CellState cell) {
+        this.field[i][j] = cell;
+        invalidate();
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -177,12 +196,8 @@ public class GameField extends View {
 
     private boolean CheckShipDestruction(int i, int j){
 
-//        if (IsNotExistOrNotShip(i-1, j) && IsNotExistOrNotShip(i+1, j)  // значит он уничтожен одинарный
-//                && IsNotExistOrNotShip(i, j-1) && IsNotExistOrNotShip(i, j+1)){
-//            ship.add(new CellPosition(i,j));
-//            return true;
-//        }
         if (IsNotExistOrNotShip(i-1, j) && IsNotExistOrNotShip(i+1, j)){ // по горизонтали
+
             while (j >= 0){
                 if (field[i][j] == CellState.Ship){
                     ship.clear();
@@ -196,9 +211,11 @@ public class GameField extends View {
                 }
                 j--;
             }
+
             if (ship.size() == 4){
                 return true;
             }
+
             j = ship.get(0).getJ();
             while (j <= 9){
                 if (field[i][j] == CellState.Ship){
@@ -227,9 +244,11 @@ public class GameField extends View {
                 }
                 i--;
             }
+
             if (ship.size() == 4){
                 return true;
             }
+
             i = ship.get(0).getI();
             while (i <= 9){
                 if (field[i][j] == CellState.Ship){

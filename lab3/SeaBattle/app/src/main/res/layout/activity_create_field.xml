@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CreateFieldActivity"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Расставьте корабли">
+    </TextView>
+
+    <com.example.seabattle.Field.GameField
+        android:id="@+id/create"
+        android:layout_width="350dp"
+        android:layout_height="350dp">
+    </com.example.seabattle.Field.GameField>
+
+    <EditText
+        android:id="@+id/code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Введите id игры">
+    </EditText>
+
+    <Button
+        android:id="@+id/create_game"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Создать игру">
+    </Button>
+
+    <Button
+        android:id="@+id/connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Подключиться"
+        android:visibility="invisible">
+    </Button>
+
+</LinearLayout>
