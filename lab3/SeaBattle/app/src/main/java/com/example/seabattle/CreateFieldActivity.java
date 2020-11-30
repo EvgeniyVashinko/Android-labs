@@ -2,6 +2,7 @@ package com.example.seabattle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -36,6 +37,8 @@ public class CreateFieldActivity extends AppCompatActivity {
                 spv = new ShipPositionVerifier(createField.getField());
                 if (spv.Check()){
                     Toast.makeText(getApplicationContext(), "Good!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+                    startActivity(intent);
                 }
                 else {
                     Toast.makeText(getApplicationContext(), "Bad!", Toast.LENGTH_SHORT).show();

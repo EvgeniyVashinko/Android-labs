@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -21,6 +22,7 @@ public class GameField extends View {
     Context context;
     int cellHeight, cellWidth;
     FieldMode mode;
+    Cell cell;
 
     public GameField(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -187,10 +189,45 @@ public class GameField extends View {
                     break;
             }
 
+            cell = new Cell(i, j, field[i][j]);
             invalidate();
         }
         return true;
     }
+
+    public Cell getLastClickCell(){
+        return cell;
+    }
+
+    private OnClickListener onClickListener;
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if(event.getAction() == KeyEvent.ACTION_UP &&
+                (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_CENTER || event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+            if(onClickListener != null) onClickListener.onClick(this);
+        }
+        return super.dispatchKeyEvent(event);
+    }
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            setPressed(true);
+        }
+        else if(event.getAction() == MotionEvent.ACTION_UP) {
+            if(onClickListener != null) onClickListener.onClick(this);
+            setPressed(false);
+        }
+        else {
+            setPressed(false);
+        }
+        return super.dispatchTouchEvent(event);
+    }
+    @Override
+    public void setOnClickListener(OnClickListener l) {
+        onClickListener = l;
+    }
+
+
 
     ArrayList<CellPosition> ship = new ArrayList<>();
 

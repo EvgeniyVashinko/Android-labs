@@ -12,6 +12,9 @@ import android.widget.TableRow;
 import android.widget.Toast;
 import android.view.ViewGroup.LayoutParams;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class MainActivity extends AppCompatActivity {
 
     int fieldLength = 10;
@@ -21,15 +24,30 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        // Write a message to the database
+        // Write a message to the database
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("FFF");
+        
+
+        myRef.setValue("Hello, World!!!!!");
+
         create = (Button) findViewById(R.id.create);
         connect = (Button) findViewById(R.id.connect);
         stat = (Button) findViewById(R.id.stat);
+
+
 
         create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), CreateFieldActivity.class);
                 startActivity(intent);
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference myRef = database.getReference("a");
+
+                myRef.setValue("Hello, World!!!!!");
             }
         });
 
