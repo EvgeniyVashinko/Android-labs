@@ -122,5 +122,5 @@ public class ShipPositionVerifier {
         }
         return result;
     }
-    
+
 }

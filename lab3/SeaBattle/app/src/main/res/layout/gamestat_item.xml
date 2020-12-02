@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/game_result"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        tools:text="1234"
+        android:gravity="center"
+        android:textSize="20sp">
+    </TextView>
+
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_weight="1"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/game_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="1234"
+        android:gravity="center"
+        android:layout_margin="5dp">
+    </TextView>
+
+    <TextView
+        android:id="@+id/game_score"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="1234"
+        android:gravity="center"
+        android:layout_margin="5dp">
+    </TextView>
+
+</LinearLayout>
+
+</LinearLayout>
+

@@ -94,13 +94,6 @@ public class CreateFieldActivity extends AppCompatActivity {
             }
         }
         myRef.child("CurrentPlayer").setValue(code.getText().toString());
-
-//        if (gameMode == GameMode.Create){
-//            myRef.child("Player1").setValue(mAuth.getUid());
-//        }
-//        else{
-//            myRef.child("Player2").setValue(mAuth.getUid());
-//        }
     }
 
 }

@@ -24,6 +24,7 @@ public class GameField extends View {
     FieldMode mode;
     Cell cell;
     private int destroyedShipNum;
+    private boolean wasMiss = false;
 
     public GameField(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -84,6 +85,10 @@ public class GameField extends View {
     public void setFieldCell(int i, int j, CellState cell) {
         this.field[i][j] = cell;
         invalidate();
+    }
+
+    public boolean CellWasMiss(){
+        return this.wasMiss;
     }
 
     @Override
@@ -176,6 +181,7 @@ public class GameField extends View {
                 case Inactive:
                     break;
                 case EnemyField:
+                    wasMiss = field[i][j] == CellState.Miss;
                     if (field[i][j] == CellState.Ship){
 //                        destroyedShipNum += 1;
                         field[i][j] = CellState.Hit;

@@ -34,7 +34,6 @@ public class GameActivity extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference myRef;
     private FirebaseAuth mAuth;
-    ArrayList<String> keys;
     private String enemyId, playerId;
     DatabaseReference statisticsRef;
 
@@ -62,26 +61,23 @@ public class GameActivity extends AppCompatActivity {
         enemyField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Toast.makeText(GameActivity.this, enemyField.getMode().toString(), Toast.LENGTH_SHORT).show();
-//                Toast.makeText(GameActivity.this, mAuth.getUid(), Toast.LENGTH_SHORT).show();
                 if (enemyField.getMode() != FieldMode.Inactive) {
                     Cell cell;
                     cell = enemyField.getLastClickCell();
                     String key = String.valueOf(cell.getX()) + String.valueOf(cell.getY());
                     String value = cell.getCellState().toString();
-                    myRef.child(enemyId).child(key).setValue(value);
-//                    myRef.child("CurrentPlayer").setValue(enemyId);
+                    if (!enemyField.CellWasMiss()){
+                        myRef.child(enemyId).child(key).setValue(value);
+                    }
                 }
             }
         });
 
-//        keys = new ArrayList<String >();
 
         ChildEventListener enemyFieldListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 // проинициализировать поле врага
-//                Toast.makeText(GameActivity.this, "Поле врага изменено", Toast.LENGTH_SHORT).show();
                 String key = snapshot.getKey().toString();
                 int i = Integer.parseInt(String.valueOf(key.charAt(0)));
                 int j = Integer.parseInt(String.valueOf(key.charAt(1)));
@@ -91,7 +87,6 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 // действие на изменение
-//                Toast.makeText(GameActivity.this, "Поле врага изменено", Toast.LENGTH_SHORT).show();
                 String key = snapshot.getKey().toString();
                 int i = Integer.parseInt(String.valueOf(key.charAt(0)));
                 int j = Integer.parseInt(String.valueOf(key.charAt(1)));
@@ -101,7 +96,6 @@ public class GameActivity extends AppCompatActivity {
                 }
                 if (enemyField.CheckWin() || myField.CheckWin()){
                     myRef.child("CurrentPlayer").setValue("Stop");
-
                 }
 
             }
@@ -126,7 +120,6 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 // проинициализировать свое поле
-//                Toast.makeText(GameActivity.this, "Инициализируем ячейку" + snapshot.getKey() + " - " + snapshot.getValue(), Toast.LENGTH_SHORT).show();
                 String key = snapshot.getKey().toString();
                 int i = Integer.parseInt(String.valueOf(key.charAt(0)));
                 int j = Integer.parseInt(String.valueOf(key.charAt(1)));
@@ -136,7 +129,6 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 // действие на изменение
-//                Toast.makeText(GameActivity.this, "Мое поле изменено", Toast.LENGTH_SHORT).show();
                 String key = snapshot.getKey().toString();
                 int i = Integer.parseInt(String.valueOf(key.charAt(0)));
                 int j = Integer.parseInt(String.valueOf(key.charAt(1)));
@@ -162,7 +154,6 @@ public class GameActivity extends AppCompatActivity {
         ValueEventListener currentPlayerListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                Toast.makeText(GameActivity.this, snapshot.getValue().toString() + " and " + mAuth.getUid() + " and " + enemyField.getMode(), Toast.LENGTH_SHORT).show();
                 if (snapshot.getValue().toString().equals(mAuth.getUid())){
                     enemyField.setMode(FieldMode.EnemyField);
                     Toast.makeText(GameActivity.this, "Ваш ход", Toast.LENGTH_SHORT).show();
@@ -170,7 +161,6 @@ public class GameActivity extends AppCompatActivity {
                 }
                 else{
                     enemyField.setMode(FieldMode.Inactive);
-//                    Toast.makeText(GameActivity.this, "Ваш ход", Toast.LENGTH_SHORT).show();
                 }
 
                 if (snapshot.getValue().toString().equals("Stop")){
@@ -199,7 +189,6 @@ public class GameActivity extends AppCompatActivity {
                         statisticsRef.child("score").setValue(score);
                     }
                 }
-
             }
 
             @Override
@@ -211,13 +200,6 @@ public class GameActivity extends AppCompatActivity {
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//                Toast.makeText(GameActivity.this, snapshot.getKey().toString() + " : " + snapshot.getValue().toString(), Toast.LENGTH_SHORT).show();
-//                Toast.makeText(GameActivity.this, snapshot.getKey().toString() + "///", Toast.LENGTH_SHORT).show();
-//                keys.add(snapshot.getKey());
-//                Toast.makeText(GameActivity.this, "Добавился" + keys.size(), Toast.LENGTH_SHORT).show();
-
-
-
                 String k = snapshot.getKey();
                 if (!k.equals("CurrentPlayer")){
                     if (k.equals(mAuth.getUid())){
@@ -232,13 +214,11 @@ public class GameActivity extends AppCompatActivity {
                 if (playerId != null && enemyId != null){
                     myRef.child("CurrentPlayer").addValueEventListener(currentPlayerListener);
                 }
-//                Toast.makeText(GameActivity.this, playerId + "//" + enemyId, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//                Toast.makeText(GameActivity.this, snapshot.getKey().toString() + " : " + snapshot.getValue().toString(), Toast.LENGTH_SHORT).show();
-//                Toast.makeText(GameActivity.this, snapshot.getKey() + "-" + snapshot.getValue(), Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
