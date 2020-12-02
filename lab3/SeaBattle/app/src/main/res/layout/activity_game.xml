@@ -11,15 +11,15 @@
 
     <com.example.seabattle.Field.GameField
         android:id="@+id/my_field"
-        android:layout_width="350dp"
-        android:layout_height="350dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:layout_margin="20dp"/>
 
 
     <com.example.seabattle.Field.GameField
         android:id="@+id/enemy_field"
-        android:layout_width="350dp"
-        android:layout_height="350dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:layout_margin="20dp"/>
 
 

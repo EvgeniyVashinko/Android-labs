@@ -23,6 +23,7 @@ public class GameField extends View {
     int cellHeight, cellWidth;
     FieldMode mode;
     Cell cell;
+    private int destroyedShipNum;
 
     public GameField(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -30,6 +31,7 @@ public class GameField extends View {
         this.fieldLength = 10;
         MakeField(fieldLength);
         mode = FieldMode.EnemyField;
+        destroyedShipNum = 0;
     }
 
     private void MakeField(int fieldLength){
@@ -39,19 +41,6 @@ public class GameField extends View {
                 field[i][j] = CellState.Empty;
             }
         }
-//        field[1][2] = CellState.Hit;
-//        field[8][9] = CellState.Hit;
-//        field[3][4] = CellState.Miss;
-//        field[4][3] = CellState.Miss;
-//        field[5][6] = CellState.Ship;
-//        field[5][7] = CellState.Ship;
-        field[1][2] = CellState.Ship;
-        field[8][9] = CellState.Ship;
-        field[3][4] = CellState.Ship;
-        field[4][3] = CellState.Ship;
-        field[5][6] = CellState.Ship;
-        field[5][7] = CellState.Ship;
-
     }
 
     @Override
@@ -65,6 +54,22 @@ public class GameField extends View {
     public void setMode(FieldMode mode) {
         this.mode = mode;
         invalidate();
+    }
+
+    public int getDestroyedShipNum() {
+        destroyedShipNum = 0;
+        for (int i = 0; i < field.length; i++) {
+            for (int j = 0; j < field.length; j++) {
+                if (field[i][j] == CellState.Hit){
+                    destroyedShipNum += 1;
+                }
+            }
+        }
+        return destroyedShipNum;
+    }
+
+    public FieldMode getMode() {
+        return mode;
     }
 
     public void setField(CellState[][] field) {
@@ -96,12 +101,12 @@ public class GameField extends View {
                         DrawHitCell(canvas, i, j);
                         break;
                     case Miss:
-                        if (mode == FieldMode.EnemyField){
+                        if (mode == FieldMode.EnemyField || mode == FieldMode.MyField || mode == FieldMode.Inactive || mode == FieldMode.Show){
                             DrawMissCell(canvas, i, j);
                         }
                         break;
                     case Ship:
-                        if (mode == FieldMode.CreateField || mode == FieldMode.MyField){
+                        if (mode == FieldMode.CreateField || mode == FieldMode.MyField || mode == FieldMode.Show){
                             DrawShipCell(canvas, i, j);
                         }
                         break;
@@ -163,15 +168,16 @@ public class GameField extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
         if (event.getAction() == MotionEvent.ACTION_DOWN){
             int j = (int) (event.getX() / cellHeight);
             int i = (int) (event.getY() / cellWidth);
             switch (mode){
                 case MyField:
+                case Inactive:
                     break;
                 case EnemyField:
                     if (field[i][j] == CellState.Ship){
+//                        destroyedShipNum += 1;
                         field[i][j] = CellState.Hit;
                         if (CheckShipDestruction(i,j)){
                             DrawMissAroundDestroyedShip();
@@ -232,8 +238,9 @@ public class GameField extends View {
     ArrayList<CellPosition> ship = new ArrayList<>();
 
     private boolean CheckShipDestruction(int i, int j){
+        ship.clear();
 
-        if (IsNotExistOrNotShip(i-1, j) && IsNotExistOrNotShip(i+1, j)){ // по горизонтали
+        if (IsShipOrHit(i, j - 1) || IsShipOrHit(i, j + 1)){ // по горизонтали
 
             while (j >= 0){
                 if (field[i][j] == CellState.Ship){
@@ -253,7 +260,7 @@ public class GameField extends View {
                 return true;
             }
 
-            j = ship.get(0).getJ();
+            j = ship.get(0).getJ() + 1;
             while (j <= 9){
                 if (field[i][j] == CellState.Ship){
                     ship.clear();
@@ -286,7 +293,7 @@ public class GameField extends View {
                 return true;
             }
 
-            i = ship.get(0).getI();
+            i = ship.get(0).getI() + 1;
             while (i <= 9){
                 if (field[i][j] == CellState.Ship){
                     ship.clear();
@@ -344,6 +351,33 @@ public class GameField extends View {
             result = field[i][j] == field[i][j];
         }
         catch (Exception e){
+            result = false;
+        }
+        return result;
+    }
+
+//    public boolean CheckWin(){
+//        return this.destroyedShipNum == 20;
+//    }
+
+    public boolean CheckWin(){
+        int shipNum = 0;
+        for (int i = 0; i < field.length; i++) {
+            for (int j = 0; j < field.length; j++) {
+                if (field[i][j] == CellState.Hit){
+                    shipNum += 1;
+                }
+            }
+        }
+        return shipNum == 20;
+    }
+
+    private boolean IsShipOrHit(int i, int j){
+        boolean result;
+        try {
+            result = field[i][j] == CellState.Ship || field[i][j] == CellState.Hit;
+        }
+        catch (Exception e) {
             result = false;
         }
         return result;

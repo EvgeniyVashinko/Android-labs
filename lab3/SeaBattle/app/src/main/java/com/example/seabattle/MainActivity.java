@@ -3,6 +3,7 @@ package com.example.seabattle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -24,30 +25,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        // Write a message to the database
-        // Write a message to the database
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("FFF");
-        
-
-        myRef.setValue("Hello, World!!!!!");
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         create = (Button) findViewById(R.id.create);
         connect = (Button) findViewById(R.id.connect);
         stat = (Button) findViewById(R.id.stat);
 
-
-
         create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), CreateFieldActivity.class);
+                intent.putExtra("mode", GameMode.Create);
                 startActivity(intent);
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference myRef = database.getReference("a");
-
-                myRef.setValue("Hello, World!!!!!");
             }
         });
 
@@ -55,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), CreateFieldActivity.class);
+                intent.putExtra("mode", GameMode.Connect);
                 startActivity(intent);
             }
         });

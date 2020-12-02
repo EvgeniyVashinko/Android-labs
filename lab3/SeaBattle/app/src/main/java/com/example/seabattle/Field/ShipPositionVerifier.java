@@ -39,10 +39,6 @@ public class ShipPositionVerifier {
     }
 
     private boolean CheckShipCellsInAngles(int i, int j) {
-        boolean a = IsNotExistOrNotShip(i - 1, j - 1);
-        boolean b = IsNotExistOrNotShip(i - 1, j + 1);
-        boolean c = IsNotExistOrNotShip(i + 1, j - 1);
-        boolean d = IsNotExistOrNotShip(i + 1, j + 1);
         return !IsNotExistOrNotShip(i - 1, j - 1) || !IsNotExistOrNotShip(i - 1, j + 1)
                 || !IsNotExistOrNotShip(i + 1, j - 1) || !IsNotExistOrNotShip(i + 1, j + 1);
     }
@@ -66,10 +62,7 @@ public class ShipPositionVerifier {
                     }
                     if (!IsNotExistOrNotShip(i, j - 1) || !IsNotExistOrNotShip(i, j + 1)){//по горизонтали
                         int x = j, y = i;
-//                        while (x >= 0){
-//                            x--;
-//                        }
-//                        x = j + 1;
+
                         while (x <= 9){
                             if (field[i][x] == CellState.Ship){
                                 checkedCells[i][x] = true;
@@ -129,15 +122,5 @@ public class ShipPositionVerifier {
         }
         return result;
     }
-
-//    private boolean IsShipOrNotExist(int i, int j){
-//        boolean result;
-//        try {
-//            result = field[i][j] == CellState.Ship;
-//        }
-//        catch (Exception e) {
-//            result = true;
-//        }
-//        return result;
-//    }
+    
 }
