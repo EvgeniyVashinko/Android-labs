@@ -82,77 +82,54 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 // проинициализировать поле врага
-                String key = snapshot.getKey().toString();
-                int i = Integer.parseInt(String.valueOf(key.charAt(0)));
-                int j = Integer.parseInt(String.valueOf(key.charAt(1)));
-                enemyField.setFieldCell(i,j, CellState.valueOf(snapshot.getValue().toString()));
+                SetCellState(snapshot.getKey(), CellState.valueOf(snapshot.getValue().toString()), enemyField);
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 // действие на изменение
-                String key = snapshot.getKey().toString();
-                int i = Integer.parseInt(String.valueOf(key.charAt(0)));
-                int j = Integer.parseInt(String.valueOf(key.charAt(1)));
-                enemyField.setFieldCell(i,j, CellState.valueOf(snapshot.getValue().toString()));
+                SetCellState(snapshot.getKey(), CellState.valueOf(snapshot.getValue().toString()), enemyField);
+
                 if (!snapshot.getValue().toString().equals(CellState.Hit.toString())){
                     myRef.child("CurrentPlayer").setValue(enemyId);
                 }
+
                 if (enemyField.CheckWin() || myField.CheckWin()){
                     myRef.child("CurrentPlayer").setValue("Stop");
                 }
-
             }
 
             @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) { }
 
             @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) { }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         };
 
         playerFieldListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 // проинициализировать свое поле
-                String key = snapshot.getKey().toString();
-                int i = Integer.parseInt(String.valueOf(key.charAt(0)));
-                int j = Integer.parseInt(String.valueOf(key.charAt(1)));
-                myField.setFieldCell(i,j, CellState.valueOf(snapshot.getValue().toString()));
+                SetCellState(snapshot.getKey(), CellState.valueOf(snapshot.getValue().toString()), myField);
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 // действие на изменение
-                String key = snapshot.getKey().toString();
-                int i = Integer.parseInt(String.valueOf(key.charAt(0)));
-                int j = Integer.parseInt(String.valueOf(key.charAt(1)));
-                myField.setFieldCell(i,j, CellState.valueOf(snapshot.getValue().toString()));
+                SetCellState(snapshot.getKey(), CellState.valueOf(snapshot.getValue().toString()), myField);
             }
 
             @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) { }
 
             @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) { }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         };
 
         currentPlayerListener = new ValueEventListener() {
@@ -161,7 +138,6 @@ public class GameActivity extends AppCompatActivity {
                 if (snapshot.getValue().toString().equals(mAuth.getUid())){
                     enemyField.setMode(FieldMode.EnemyField);
                     Toast.makeText(GameActivity.this, "Ваш ход", Toast.LENGTH_SHORT).show();
-
                 }
                 else{
                     enemyField.setMode(FieldMode.Inactive);
@@ -171,27 +147,12 @@ public class GameActivity extends AppCompatActivity {
                     enemyField.setMode(FieldMode.Show);
                     Toast.makeText(GameActivity.this, "Игра окончена", Toast.LENGTH_SHORT).show();
                     if (enemyField.CheckWin()){
-                        Date currentDate = new Date();
-                        DateFormat dateFormat = new SimpleDateFormat("HH-mm-ss-dd-MM-yyyy", Locale.getDefault());
-                        String dateText = dateFormat.format(currentDate);
-                        statisticsRef = statisticsRef.child(mAuth.getUid()).child(dateText);
-                        statisticsRef.child("result").setValue("Победа");
-                        statisticsRef.child("player1").setValue(playerId);
-                        statisticsRef.child("player2").setValue(enemyId);
-                        String score = String.valueOf(enemyField.getDestroyedShipNum()) + " - " +  String.valueOf(myField.getDestroyedShipNum());
-                        statisticsRef.child("score").setValue(score);
+                        WriteStat("Победа");
                     }
                     else if (myField.CheckWin()){
-                        Date currentDate = new Date();
-                        DateFormat dateFormat = new SimpleDateFormat("HH-mm-ss-dd-MM-yyyy", Locale.getDefault());
-                        String dateText = dateFormat.format(currentDate);
-                        statisticsRef = statisticsRef.child(mAuth.getUid()).child(dateText);
-                        statisticsRef.child("result").setValue("Поражение");
-                        statisticsRef.child("player1").setValue(playerId);
-                        statisticsRef.child("player2").setValue(enemyId);
-                        String score = String.valueOf(enemyField.getDestroyedShipNum()) + " - " + String.valueOf(myField.getDestroyedShipNum());
-                        statisticsRef.child("score").setValue(score);
+                        WriteStat("Поражение");
                     }
+
                     myRef.child(playerId).removeEventListener(playerFieldListener);
                     myRef.child(enemyId).removeEventListener(enemyFieldListener);
                     myRef.child("CurrentPlayer").removeEventListener(currentPlayerListener);
@@ -201,9 +162,7 @@ public class GameActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         };
 
         childEventListener = new ChildEventListener() {
@@ -226,24 +185,16 @@ public class GameActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) { }
 
             @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) { }
 
             @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) { }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         };
 
         myRef.addChildEventListener(childEventListener);
@@ -256,8 +207,23 @@ public class GameActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    private void GetFieldFromDbData(){
-//        String player1 = myRef.
+    private void WriteStat(String result){
+        Date currentDate = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("HH-mm-ss-dd-MM-yyyy", Locale.getDefault());
+        String dateText = dateFormat.format(currentDate);
+        statisticsRef = statisticsRef.child(mAuth.getUid()).child(dateText);
+        statisticsRef.child("result").setValue(result);
+        statisticsRef.child("player1").setValue(playerId);
+        statisticsRef.child("player2").setValue(enemyId);
+        String score = String.valueOf(enemyField.getDestroyedShipNum()) + " - " +  String.valueOf(myField.getDestroyedShipNum());
+        statisticsRef.child("score").setValue(score);
     }
+
+    private void SetCellState(String key, CellState cellState, GameField field){
+        int i = Integer.parseInt(String.valueOf(key.charAt(0)));
+        int j = Integer.parseInt(String.valueOf(key.charAt(1)));
+        field.setFieldCell(i,j, cellState);
+    }
+
 
 }
