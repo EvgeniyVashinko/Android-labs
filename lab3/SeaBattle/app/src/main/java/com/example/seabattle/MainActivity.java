@@ -21,7 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class MainActivity extends AppCompatActivity {
 
     int fieldLength = 10;
-    Button create, stat, connect, exit;
+    Button create, stat, connect, exit, profile;
     private FirebaseAuth mAuth;
 
     @Override
@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         connect = (Button) findViewById(R.id.connect);
         stat = (Button) findViewById(R.id.stat);
         exit = (Button) findViewById(R.id.exit);
+        profile = (Button) findViewById(R.id.profile);
 
         create.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,5 +74,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        profile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

@@ -36,6 +36,10 @@ public class GameActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private String enemyId, playerId;
     DatabaseReference statisticsRef;
+    ChildEventListener childEventListener;
+    ChildEventListener enemyFieldListener;
+    ChildEventListener playerFieldListener;
+    ValueEventListener currentPlayerListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +78,7 @@ public class GameActivity extends AppCompatActivity {
         });
 
 
-        ChildEventListener enemyFieldListener = new ChildEventListener() {
+        enemyFieldListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 // проинициализировать поле врага
@@ -116,7 +120,7 @@ public class GameActivity extends AppCompatActivity {
             }
         };
 
-        ChildEventListener playerFieldListener = new ChildEventListener() {
+        playerFieldListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 // проинициализировать свое поле
@@ -151,7 +155,7 @@ public class GameActivity extends AppCompatActivity {
             }
         };
 
-        ValueEventListener currentPlayerListener = new ValueEventListener() {
+        currentPlayerListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.getValue().toString().equals(mAuth.getUid())){
@@ -177,7 +181,7 @@ public class GameActivity extends AppCompatActivity {
                         String score = String.valueOf(enemyField.getDestroyedShipNum()) + " - " +  String.valueOf(myField.getDestroyedShipNum());
                         statisticsRef.child("score").setValue(score);
                     }
-                    else {
+                    else if (myField.CheckWin()){
                         Date currentDate = new Date();
                         DateFormat dateFormat = new SimpleDateFormat("HH-mm-ss-dd-MM-yyyy", Locale.getDefault());
                         String dateText = dateFormat.format(currentDate);
@@ -188,6 +192,11 @@ public class GameActivity extends AppCompatActivity {
                         String score = String.valueOf(enemyField.getDestroyedShipNum()) + " - " + String.valueOf(myField.getDestroyedShipNum());
                         statisticsRef.child("score").setValue(score);
                     }
+                    myRef.child(playerId).removeEventListener(playerFieldListener);
+                    myRef.child(enemyId).removeEventListener(enemyFieldListener);
+                    myRef.child("CurrentPlayer").removeEventListener(currentPlayerListener);
+                    myRef.removeEventListener(childEventListener);
+                    myRef.removeValue();
                 }
             }
 
@@ -197,7 +206,7 @@ public class GameActivity extends AppCompatActivity {
             }
         };
 
-        ChildEventListener childEventListener = new ChildEventListener() {
+        childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 String k = snapshot.getKey();
@@ -240,10 +249,15 @@ public class GameActivity extends AppCompatActivity {
         myRef.addChildEventListener(childEventListener);
     }
 
-
-
+    @Override
+    public void onBackPressed() {
+        myRef.child("CurrentPlayer").setValue("Stop");
+        myRef.removeValue();
+        super.onBackPressed();
+    }
 
     private void GetFieldFromDbData(){
 //        String player1 = myRef.
     }
+
 }

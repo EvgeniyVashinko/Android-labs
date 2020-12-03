@@ -53,6 +53,7 @@ public class CreateFieldActivity extends AppCompatActivity {
         }
         else {
             code.setHint("Введите код игры");
+            create.setText("Подключиться");
         }
 
         create.setOnClickListener(new View.OnClickListener() {
