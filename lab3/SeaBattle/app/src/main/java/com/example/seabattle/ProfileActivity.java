@@ -3,9 +3,11 @@ package com.example.seabattle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.seabattle.Models.AppTheme;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -54,6 +57,7 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SetTheme();
         setContentView(R.layout.activity_profile);
 
         img = (ImageView) findViewById(R.id.user_image);
@@ -200,6 +204,26 @@ public class ProfileActivity extends AppCompatActivity {
                     });
         } else {
             Toast.makeText(this, "Файл не выбран", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void SetTheme(){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        String themeVal = sp.getString("theme", "Classic");
+        AppTheme appTheme = AppTheme.valueOf(themeVal);
+        switch (appTheme){
+            case LightPink:
+                setTheme(R.style.Light_pink_theme);
+                break;
+            case DarkPink:
+                setTheme(R.style.Dark_pink_theme);
+                break;
+            case Dark:
+                setTheme(R.style.Theme_AppCompat_NoActionBar);
+                break;
+            case Classic:
+                setTheme(R.style.Theme_SeaBattle);
+                break;
         }
     }
 }

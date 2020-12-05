@@ -1,8 +1,10 @@
 package com.example.seabattle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +16,7 @@ import com.example.seabattle.Field.CellState;
 import com.example.seabattle.Field.FieldMode;
 import com.example.seabattle.Field.GameField;
 import com.example.seabattle.Field.ShipPositionVerifier;
+import com.example.seabattle.Models.AppTheme;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -28,10 +31,12 @@ public class CreateFieldActivity extends AppCompatActivity {
     DatabaseReference myRef;
     private FirebaseAuth mAuth;
     GameMode gameMode;
+    String gameId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SetTheme();
         setContentView(R.layout.activity_create_field);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -48,8 +53,11 @@ public class CreateFieldActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         gameMode = GameMode.valueOf(bundle.get("mode").toString());
 
-        if (gameMode == GameMode.Connect.Create){
+        if (gameMode == GameMode.Create){
             code.setText(mAuth.getUid());
+            gameId = "GAME_" + code.getText().toString();
+            myRef = database.getReference("games").child(gameId);
+            myRef.removeValue();
         }
         else {
             code.setHint("Введите код игры");
@@ -83,7 +91,9 @@ public class CreateFieldActivity extends AppCompatActivity {
     }
 
     private void AddFieldToDB(CellState[][] field){
-        String gameId = "GAME_" + code.getText().toString();
+//        String gameId = "GAME_" + code.getText().toString();
+//        myRef = database.getReference("games").child(gameId);
+        gameId = "GAME_" + code.getText().toString();
         myRef = database.getReference("games").child(gameId);
 
         String key, value;
@@ -95,6 +105,26 @@ public class CreateFieldActivity extends AppCompatActivity {
             }
         }
         myRef.child("CurrentPlayer").setValue(code.getText().toString());
+    }
+
+    private void SetTheme(){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        String themeVal = sp.getString("theme", "Classic");
+        AppTheme appTheme = AppTheme.valueOf(themeVal);
+        switch (appTheme){
+            case LightPink:
+                setTheme(R.style.Light_pink_theme);
+                break;
+            case DarkPink:
+                setTheme(R.style.Dark_pink_theme);
+                break;
+            case Dark:
+                setTheme(R.style.Theme_AppCompat_NoActionBar);
+                break;
+            case Classic:
+                setTheme(R.style.Theme_SeaBattle);
+                break;
+        }
     }
 
 }

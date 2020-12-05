@@ -2,8 +2,10 @@ package com.example.seabattle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -12,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.seabattle.Models.AppTheme;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -25,6 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText email, password;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SetTheme();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -109,5 +113,25 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private void SetTheme(){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        String themeVal = sp.getString("theme", "Classic");
+        AppTheme appTheme = AppTheme.valueOf(themeVal);
+        switch (appTheme){
+            case LightPink:
+                setTheme(R.style.Light_pink_theme);
+                break;
+            case DarkPink:
+                setTheme(R.style.Dark_pink_theme);
+                break;
+            case Dark:
+                setTheme(R.style.Theme_AppCompat_NoActionBar);
+                break;
+            case Classic:
+                setTheme(R.style.Theme_SeaBattle);
+                break;
+        }
     }
 }

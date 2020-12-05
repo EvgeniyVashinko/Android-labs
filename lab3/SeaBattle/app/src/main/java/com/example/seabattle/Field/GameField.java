@@ -1,6 +1,7 @@
 package com.example.seabattle.Field;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -10,7 +11,9 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 
+import com.example.seabattle.Models.AppTheme;
 import com.example.seabattle.R;
 
 import java.util.ArrayList;
@@ -25,6 +28,15 @@ public class GameField extends View {
     Cell cell;
     private int destroyedShipNum;
     private boolean wasMiss = false;
+    Paint borderPaint;
+    Paint cellBorderPaint;
+    Paint hitPaint;
+    Paint missCellPaint;
+    Paint shipPaint;
+    Paint shipBorderPaint;
+    int fieldColor;
+    private AppTheme appTheme = AppTheme.Classic;
+
 
     public GameField(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -33,6 +45,71 @@ public class GameField extends View {
         MakeField(fieldLength);
         mode = FieldMode.EnemyField;
         destroyedShipNum = 0;
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String themeVal = sp.getString("theme", "Classic");
+        appTheme = AppTheme.valueOf(themeVal);
+
+        switch (appTheme){
+            case Dark:
+                DarkThemePaints();
+                fieldColor = getResources().getColor(R.color.darkGray);
+                break;
+            case DarkPink:
+                PinkDarkThemePaints();
+                fieldColor = getResources().getColor(R.color.darkGray);
+                break;
+            case LightPink:
+                PinkLightThemePaints();
+                fieldColor = Color.WHITE;
+                break;
+            default:
+                ClassicThemePaints();
+                fieldColor = Color.WHITE;
+        }
+    }
+
+    private void PaintsInitialization(int fieldBorderColor, int cellBorderColor, int missCellColor, int shipColor, int shipBorderColor, int hitColor){
+        borderPaint = new Paint();
+        borderPaint.setColor(fieldBorderColor);
+        borderPaint.setStrokeWidth(20);
+        borderPaint.setStyle(Paint.Style.STROKE);
+
+        cellBorderPaint = new Paint();
+        cellBorderPaint.setColor(cellBorderColor);
+        cellBorderPaint.setStrokeWidth(10);
+
+        missCellPaint = new Paint();
+        missCellPaint.setColor(missCellColor);
+        missCellPaint.setStrokeWidth(25);
+
+        shipPaint = new Paint();
+        shipPaint.setColor(shipColor);
+        shipPaint.setStrokeWidth(10);
+
+        shipBorderPaint = new Paint();
+        shipBorderPaint.setColor(shipBorderColor);
+        shipBorderPaint.setStrokeWidth(10);
+        shipBorderPaint.setStyle(Paint.Style.STROKE);
+
+        hitPaint = new Paint();
+        hitPaint.setColor(hitColor);
+        hitPaint.setStrokeWidth(10);
+    }
+    private void DarkThemePaints(){
+        PaintsInitialization(Color.GRAY, Color.GRAY, Color.GRAY, getResources().getColor(R.color.light_blue), Color.BLUE, Color.RED);
+    }
+
+    private void ClassicThemePaints(){
+        PaintsInitialization(Color.BLACK, Color.BLACK, Color.GRAY, getResources().getColor(R.color.light_blue), Color.BLUE, Color.RED);
+    }
+
+    private void PinkLightThemePaints(){
+        PaintsInitialization(getResources().getColor(R.color.light_pink), getResources().getColor(R.color.light_pink), Color.GRAY, getResources().getColor(R.color.light_pink), getResources().getColor(R.color.pink), Color.BLUE);
+    }
+
+    private void PinkDarkThemePaints(){
+        PaintsInitialization(getResources().getColor(R.color.light_pink), getResources().getColor(R.color.light_pink), Color.GRAY, getResources().getColor(R.color.light_pink), getResources().getColor(R.color.pink), Color.BLUE);
     }
 
     private void MakeField(int fieldLength){
@@ -94,10 +171,10 @@ public class GameField extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawColor(Color.WHITE);
+        canvas.drawColor(fieldColor);
 
-        DrawFieldBorder(canvas);
         DrawCellsBorder(canvas);
+        DrawFieldBorder(canvas);
 
         for (int i = 0; i < fieldLength; i++) {
             for (int j = 0; j < fieldLength; j++) {
@@ -120,20 +197,17 @@ public class GameField extends View {
         }
     }
 
-    private void DrawFieldBorder(Canvas canvas){
-        Paint borderPaint = new Paint();
-        borderPaint.setColor(Color.BLACK);
-        borderPaint.setStrokeWidth(20);
-        borderPaint.setStyle(Paint.Style.STROKE);
 
+    private void DrawFieldBorder(Canvas canvas){
+        if (mode == FieldMode.Inactive){
+            borderPaint.setColor(Color.RED);
+        }else if(mode == FieldMode.EnemyField){
+            borderPaint.setColor(Color.GREEN);
+        }
         canvas.drawRect(0,getHeight(),getWidth(),0, borderPaint);
     }
 
     private void DrawCellsBorder(Canvas canvas) {
-        Paint cellBorderPaint = new Paint();
-        cellBorderPaint.setColor(Color.BLACK);
-        cellBorderPaint.setStrokeWidth(10);
-
         for (int i = 1; i < fieldLength; i++) {
             canvas.drawLine(i*cellWidth, 0, i*cellWidth, getHeight(), cellBorderPaint);
             canvas.drawLine(0, i*cellWidth, getHeight(), i*cellWidth, cellBorderPaint);
@@ -141,33 +215,18 @@ public class GameField extends View {
     }
 
     private void DrawHitCell(Canvas canvas, int i, int j){
-        Paint hitPaint = new Paint();
-        hitPaint.setColor(Color.RED);
-        hitPaint.setStrokeWidth(10);
-
         canvas.drawLine(j * cellWidth, i * cellHeight,(j + 1) * cellWidth,(i + 1) * cellHeight, hitPaint);
         canvas.drawLine((j+1) * cellWidth, i * cellHeight,j * cellHeight,(i + 1) * cellWidth, hitPaint);
     }
 
     private void DrawShipCell(Canvas canvas, int i, int j){
-        Paint paint = new Paint();
-        paint.setColor(getResources().getColor(R.color.light_blue));
-        paint.setStrokeWidth(10);
+        canvas.drawRect(j * cellWidth, i * cellHeight, (j+1)* cellWidth, (i+1)*cellHeight, shipPaint);
 
-        canvas.drawRect(j * cellWidth, i * cellHeight, (j+1)* cellWidth, (i+1)*cellHeight, paint);
-
-        paint.setColor(Color.BLUE);
-        paint.setStyle(Paint.Style.STROKE);
-
-        canvas.drawRect(j * cellWidth, i * cellHeight, (j+1)* cellWidth, (i+1)*cellHeight, paint);
+        canvas.drawRect(j * cellWidth, i * cellHeight, (j+1)* cellWidth, (i+1)*cellHeight, shipBorderPaint);
     }
 
     private void DrawMissCell(Canvas canvas, int i, int j){
-        Paint paint = new Paint();
-        paint.setColor(Color.GRAY);
-        paint.setStrokeWidth(25);
-
-        canvas.drawPoint(j * cellWidth + cellWidth/2, i * cellHeight + cellHeight/2, paint);
+        canvas.drawPoint(j * cellWidth + cellWidth/2, i * cellHeight + cellHeight/2, missCellPaint);
     }
 
 
@@ -176,6 +235,18 @@ public class GameField extends View {
         if (event.getAction() == MotionEvent.ACTION_DOWN){
             int j = (int) (event.getX() / cellHeight);
             int i = (int) (event.getY() / cellWidth);
+            if (i < 0){
+                i = 0;
+            }
+            if (i > 9){
+                i = 9;
+            }
+            if (j < 0){
+                j = 0;
+            }
+            if (j > 9){
+                j = 9;
+            }
             switch (mode){
                 case MyField:
                 case Inactive:

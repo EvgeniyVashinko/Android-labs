@@ -48,6 +48,15 @@
     </Button>
 
     <Button
+        android:id="@+id/settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Настройки"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp">
+    </Button>
+
+    <Button
         android:id="@+id/exit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

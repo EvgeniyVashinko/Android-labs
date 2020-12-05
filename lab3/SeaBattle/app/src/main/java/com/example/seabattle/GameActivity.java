@@ -3,8 +3,10 @@ package com.example.seabattle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +16,7 @@ import com.example.seabattle.Field.Cell;
 import com.example.seabattle.Field.CellState;
 import com.example.seabattle.Field.FieldMode;
 import com.example.seabattle.Field.GameField;
+import com.example.seabattle.Models.AppTheme;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -44,6 +47,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SetTheme();
         setContentView(R.layout.activity_game);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -90,12 +94,12 @@ public class GameActivity extends AppCompatActivity {
                 // действие на изменение
                 SetCellState(snapshot.getKey(), CellState.valueOf(snapshot.getValue().toString()), enemyField);
 
-                if (!snapshot.getValue().toString().equals(CellState.Hit.toString())){
-                    myRef.child("CurrentPlayer").setValue(enemyId);
-                }
-
                 if (enemyField.CheckWin() || myField.CheckWin()){
                     myRef.child("CurrentPlayer").setValue("Stop");
+                }
+
+                if (!snapshot.getValue().toString().equals(CellState.Hit.toString())){
+                    myRef.child("CurrentPlayer").setValue(enemyId);
                 }
             }
 
@@ -106,7 +110,9 @@ public class GameActivity extends AppCompatActivity {
             public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) { }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getApplicationContext(), "enFL  - " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         };
 
         playerFieldListener = new ChildEventListener() {
@@ -129,7 +135,9 @@ public class GameActivity extends AppCompatActivity {
             public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) { }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getApplicationContext(), "plFL  - " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         };
 
         currentPlayerListener = new ValueEventListener() {
@@ -162,7 +170,9 @@ public class GameActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getApplicationContext(), "CurPL  - " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         };
 
         childEventListener = new ChildEventListener() {
@@ -194,7 +204,9 @@ public class GameActivity extends AppCompatActivity {
             public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) { }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getApplicationContext(), "chEL  - " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         };
 
         myRef.addChildEventListener(childEventListener);
@@ -204,7 +216,10 @@ public class GameActivity extends AppCompatActivity {
     public void onBackPressed() {
         myRef.child("CurrentPlayer").setValue("Stop");
         myRef.removeValue();
-        super.onBackPressed();
+        Intent intent = new Intent(GameActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+//        super.onBackPressed();
     }
 
     private void WriteStat(String result){
@@ -225,5 +240,23 @@ public class GameActivity extends AppCompatActivity {
         field.setFieldCell(i,j, cellState);
     }
 
-
+    private void SetTheme(){
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        String themeVal = sp.getString("theme", "Classic");
+        AppTheme appTheme = AppTheme.valueOf(themeVal);
+        switch (appTheme){
+            case LightPink:
+                setTheme(R.style.Light_pink_theme);
+                break;
+            case DarkPink:
+                setTheme(R.style.Dark_pink_theme);
+                break;
+            case Dark:
+                setTheme(R.style.Theme_AppCompat_NoActionBar);
+                break;
+            case Classic:
+                setTheme(R.style.Theme_SeaBattle);
+                break;
+        }
+    }
 }
