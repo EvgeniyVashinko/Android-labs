@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "558105951777",
+    "firebase_url": "https://seabattlegame-18449.firebaseio.com",
+    "project_id": "seabattlegame-18449",
+    "storage_bucket": "seabattlegame-18449.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:558105951777:android:1e942d8e5c7efbdeddad60",
+        "android_client_info": {
+          "package_name": "com.example.seabattle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "558105951777-8vuj074d25an3q4vt5grvst73i1mlmt5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIMwATTxriZ5dm_AiFQid0iRYWJ5kZPcw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "558105951777-8vuj074d25an3q4vt5grvst73i1mlmt5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
