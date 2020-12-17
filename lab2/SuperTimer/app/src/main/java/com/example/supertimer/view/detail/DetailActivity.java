@@ -19,6 +19,7 @@ import android.widget.ListView;
 
 import com.example.supertimer.App;
 import com.example.supertimer.R;
+import com.example.supertimer.Settings;
 import com.example.supertimer.model.Action;
 import com.example.supertimer.view.main.MainViewModel;
 import com.example.supertimer.view.main.TimerAdapter;
@@ -27,7 +28,8 @@ import com.example.supertimer.view.timer.TimerActivity;
 import java.util.List;
 import java.util.Locale;
 
-public class DetailActivity extends AppCompatActivity {
+
+public class DetailActivity extends Settings {
 
     EditText timerName;
     Button add;
@@ -43,7 +45,7 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        App.getInstance().ApplySettings(DetailActivity.this);
+        this.ApplySettings();
         setContentView(R.layout.activity_detail);
 
         timerName = (EditText)findViewById(R.id.timerName);

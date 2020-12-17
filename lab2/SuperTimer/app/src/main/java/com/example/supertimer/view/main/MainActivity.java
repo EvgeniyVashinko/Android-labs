@@ -21,6 +21,7 @@ import android.widget.ListView;
 
 import com.example.supertimer.App;
 import com.example.supertimer.R;
+import com.example.supertimer.Settings;
 import com.example.supertimer.model.Timer;
 import com.example.supertimer.view.detail.DetailActivity;
 import com.example.supertimer.view.settings.SettingsActivity;
@@ -30,7 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Settings {
 
     MainViewModel mainViewModel;
     Context context = this;
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        App.getInstance().ApplySettings(MainActivity.this);
+        this.ApplySettings();
         setContentView(R.layout.activity_main);
 
         addTimer = (Button) findViewById(R.id.addTimerButton);

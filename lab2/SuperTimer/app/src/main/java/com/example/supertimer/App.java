@@ -64,26 +64,4 @@ public class App extends Application {
     public void setActionDao(ActionDao actionDao) {
         this.actionDao = actionDao;
     }
-
-    public void ApplySettings(Context context){
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        float size = Float.parseFloat(sp.getString("fontSize", "1.0"));
-        String lang = sp.getString("language", "RU");
-        boolean nMode = sp.getBoolean("nightMode",  false);
-
-        if (nMode) {
-            context.setTheme(R.style.my_theme_dark);
-        } else {
-            context.setTheme(R.style.my_theme_light);
-        }
-
-        Configuration configuration = new Configuration();
-        configuration.fontScale = size;
-
-        Locale locale = new Locale(lang);
-        Locale.setDefault(locale);
-        configuration.locale = locale;
-
-        context.getResources().updateConfiguration(configuration, null);
-    }
 }

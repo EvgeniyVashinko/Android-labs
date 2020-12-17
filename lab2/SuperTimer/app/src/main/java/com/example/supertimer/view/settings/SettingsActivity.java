@@ -15,16 +15,17 @@ import androidx.preference.SwitchPreferenceCompat;
 
 import com.example.supertimer.App;
 import com.example.supertimer.R;
+import com.example.supertimer.Settings;
 import com.example.supertimer.view.detail.DetailActivity;
 import com.example.supertimer.view.main.MainActivity;
 import java.util.Locale;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends Settings {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        App.getInstance().ApplySettings(SettingsActivity.this);
+        this.ApplySettings();
         setContentView(R.layout.settings_activity);
 
         if (savedInstanceState == null) {

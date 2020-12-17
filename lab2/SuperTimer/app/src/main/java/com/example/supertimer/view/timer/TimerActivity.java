@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.example.supertimer.App;
 import com.example.supertimer.R;
+import com.example.supertimer.Settings;
 import com.example.supertimer.TimerService;
 import com.example.supertimer.model.Action;
 import com.example.supertimer.model.Timer;
@@ -30,7 +31,7 @@ import com.example.supertimer.view.main.MainActivity;
 
 import java.util.List;
 
-public class TimerActivity extends AppCompatActivity {
+public class TimerActivity extends Settings {
 
     ListView actListView;
     View pause;
@@ -70,7 +71,7 @@ public class TimerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        App.getInstance().ApplySettings(TimerActivity.this);
+        this.ApplySettings();
         setContentView(R.layout.activity_timer);
 
         timerViewModel = new ViewModelProvider(this).get(TimerViewModel.class);
