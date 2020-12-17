@@ -45,7 +45,6 @@ public class TimerActivity extends AppCompatActivity {
     ServiceConnection serviceConnection;
     Intent intent;
     SharedPreferences sp;
-    float size = 1;
 
     private final String ACTION = "TIMER_ACTION";
     BroadcastReceiver br;
@@ -81,7 +80,6 @@ public class TimerActivity extends AppCompatActivity {
         actionName = findViewById(R.id.aName);
         time = findViewById(R.id.secView);
         sp = PreferenceManager.getDefaultSharedPreferences(this);
-        size = Float.parseFloat(sp.getString("fontSize", "1.0"));
 
         serviceConnection = new ServiceConnection() {
             @Override
@@ -115,7 +113,6 @@ public class TimerActivity extends AppCompatActivity {
         actionList = App.getInstance().getActionDao().findActionsByTimerId(timerId);
 
         adapter = new TimerPageAdapter(this, R.layout.timer_action_item, actionList);
-        adapter.setSize((int) (adapter.getSize() * size));
         actListView.setAdapter(adapter);
 
 

@@ -19,27 +19,20 @@ public class TimerPageAdapter extends ArrayAdapter<Action> {
     private LayoutInflater inflater;
     private int layout;
     private List<Action> actions;
-    private int size;
 
     public TimerPageAdapter(Context context, int resource, List<Action> actions) {
         super(context, resource, actions);
         this.actions = actions;
         this.layout = resource;
         this.inflater = LayoutInflater.from(context);
-        this.size = 12;
     }
-    public void setSize(int num){
-        size = num;
-    }
-    public int getSize() { return size; }
+
     public View getView(int position, View convertView, ViewGroup parent) {
 
         View view=inflater.inflate(this.layout, parent, false);
 
         TextView actionName = (TextView)view.findViewById(R.id.actTextView);
-        actionName.setTextSize((float) (size));
         TextView seconds = (TextView)view.findViewById(R.id.actSecTextView);
-        seconds.setTextSize((float) (size));
 
         Action action = actions.get(position);
 

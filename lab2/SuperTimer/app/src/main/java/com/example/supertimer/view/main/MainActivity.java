@@ -39,9 +39,7 @@ public class MainActivity extends AppCompatActivity {
     TimerAdapter timerAdapter;
     Button addTimer;
     EditText timerName;
-    float size = 1;
-    String lang;
-    boolean nMode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         timerName = (EditText) findViewById(R.id.timerNameAdd);
 
         sp = PreferenceManager.getDefaultSharedPreferences(this);
-        size = Float.parseFloat(sp.getString("fontSize", "1.0"));
 
         addTimer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
 
         timerAdapter = new TimerAdapter(context, R.layout.timer_list_item, App.getInstance().getTimerDao().getAllTimers());
         timerListView = (ListView) findViewById(R.id.timerListView);
-        timerAdapter.setSize((int) (timerAdapter.getSize() * size));
         timerListView.setAdapter(timerAdapter);
         timerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -86,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(List<Timer> timers) {
                 timerAdapter = new TimerAdapter(context, R.layout.timer_list_item, App.getInstance().getTimerDao().getAllTimers());
-                timerAdapter.setSize((int) (timerAdapter.getSize() * size));
                 timerListView.setAdapter(timerAdapter);
             }
         });
@@ -109,28 +104,5 @@ public class MainActivity extends AppCompatActivity {
         MenuItem mi = menu.add(0, 1, 0, "Preferences");
         mi.setIntent(new Intent(this, SettingsActivity.class));
         return super.onCreateOptionsMenu(menu);
-    }
-
-    private void ApplySettings(){
-        sp = PreferenceManager.getDefaultSharedPreferences(this);
-
-        size = Float.parseFloat(sp.getString("fontSize", "1.0"));
-        lang = sp.getString("language", "RU");
-        nMode = sp.getBoolean("nightMode",  false);
-
-        if (nMode) {
-            setTheme(R.style.my_theme_dark);
-        } else {
-            setTheme(R.style.my_theme_light);
-        }
-
-        Configuration configuration = new Configuration();
-        configuration.fontScale = size;
-
-        Locale locale = new Locale(lang);
-        Locale.setDefault(locale);
-        configuration.locale = locale;
-
-        getBaseContext().getResources().updateConfiguration(configuration, null);
     }
 }

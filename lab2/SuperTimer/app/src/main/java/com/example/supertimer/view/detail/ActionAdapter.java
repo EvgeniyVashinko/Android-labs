@@ -23,34 +23,24 @@ public class ActionAdapter  extends ArrayAdapter<Action> {
     private LayoutInflater inflater;
     private int layout;
     private List<Action> actions;
-    private int size;
-
 
     public ActionAdapter(Context context, int resource, List<Action> actions) {
         super(context, resource, actions);
         this.actions = actions;
         this.layout = resource;
         this.inflater = LayoutInflater.from(context);
-        this.size = 12;
     }
-
-    public void setSize(int num){
-        size = num;
-    }
-    public int getSize() { return size; }
 
     public View getView(int position, View convertView, ViewGroup parent) {
 
         View view=inflater.inflate(this.layout, parent, false);
 
         EditText actionName = (EditText) view.findViewById(R.id.nameEditText);
-        actionName.setTextSize(size);
         View edit = view.findViewById(R.id.editAction);
         View delete = view.findViewById(R.id.deleteAction);
         Button plus = (Button)view.findViewById(R.id.plusButton);
         Button minus = (Button)view.findViewById(R.id.minusButton);
         TextView seconds = (TextView)view.findViewById(R.id.secondsTextView);
-        seconds.setTextSize(size);
 
         Action action = actions.get(position);
 

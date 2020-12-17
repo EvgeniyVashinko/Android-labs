@@ -38,7 +38,6 @@ public class DetailActivity extends AppCompatActivity {
     DetailViewModel detailViewModel;
     int id = 1;
     ActionAdapter actionAdapter;
-    float size = 1;
     SharedPreferences sp;
 
     @Override
@@ -59,10 +58,8 @@ public class DetailActivity extends AppCompatActivity {
         }
         timerName.setText(Integer.toString(id));
         sp = PreferenceManager.getDefaultSharedPreferences(this);
-        size = Float.parseFloat(sp.getString("fontSize", "1.0"));
 
         actionAdapter = new ActionAdapter(context, R.layout.action_list_item, App.getInstance().getActionDao().findActionsByTimerId(id));
-        actionAdapter.setSize((int) (actionAdapter.getSize() * size));
         actionListView.setAdapter(actionAdapter);
         detailViewModel = new ViewModelProvider(this).get(DetailViewModel.class);
 
@@ -70,7 +67,6 @@ public class DetailActivity extends AppCompatActivity {
             @Override
             public void onChanged(List<Action> actions) {
                 actionAdapter = new ActionAdapter(context, R.layout.action_list_item, App.getInstance().getActionDao().findActionsByTimerId(id));
-                actionAdapter.setSize((int) (actionAdapter.getSize() * size));
                 actionListView.setAdapter(actionAdapter);
             }
         });
